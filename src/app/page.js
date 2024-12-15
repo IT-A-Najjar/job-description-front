@@ -1,101 +1,160 @@
-import Image from "next/image";
+
+"use client"; // أضف هذا السطر
+
+import { useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [formData, setFormData] = useState({
+    Name: "",
+    SubordinateUnits: "",
+    TrackingUnits: "",
+    Objective: "",
+    tasks: [{
+      Description: "",
+    }
+    ],
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // تحديث الحقول العامة
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // تحديث حقل المهام
+  const handleTaskChange = (index, field, value) => {
+    const updatedTasks = [...formData.tasks];
+    updatedTasks[index][field] = value;
+    setFormData({ ...formData, tasks: updatedTasks });
+  };
+
+
+  // إضافة حقل مهام جديد
+  const addTaskField = () => {
+    setFormData({
+      ...formData,
+      tasks: [...formData.tasks, { OrganizationUnitID: "", Description: "" }],
+    });
+  };
+
+
+  // إرسال البيانات إلى API
+  const handleSubmit = async (e) => {
+    console.log(formData);
+
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/api/organization-units", formData);
+      toast.success('تم الاضافة بنجاح');
+      setFormData(
+        {
+          Name: "",
+          SubordinateUnits: "",
+          TrackingUnits: "",
+          Objective: "",
+          tasks: [{
+            Description: "",
+          }
+          ],
+        });
+    } catch (error) {
+      console.error("Error adding organization unit:", error);
+      toast.error("حدث خطا ما يرجى المحاولة مرة اخرى");
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+      <div className="flex" style={{ width: "100%", justifyContent: "space-between",alignItems:"center" }}>
+        <div>
+          <h1>بطاقة توصيف وحدة تنظيمية</h1>
+          <h3>يهدف هذا الاستبيان لجمع معلومات عن الوحدات التنظيمية</h3>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div style={{minWidth:"168px", textAlign:"center"}}>
+          <img src="/images/logo.png" />
+          <p>الجمهورية العربية السورية</p>
+          <div>محافظة دمشق</div>
+        </div>
+      </div>
+      <form onSubmit={handleSubmit}>
+        {/* حقل اسم الوحدة */}
+        <div style={{ marginBottom: "10px" }}>
+          <label htmlFor="name">مسمى الوحدة التنظيمية</label>
+          <input
+            type="text"
+            id="Name"
+            name="Name"
+            value={formData.Name}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        </div>
+
+        {/* حقل الهدف */}
+        <div style={{ marginBottom: "10px" }}>
+          <label htmlFor="SubordinateUnits">الوحدات التنظيمية التي تتبع لها هذه الوحدات التنظيمية</label>
+          <textarea
+            id="SubordinateUnits"
+            name="SubordinateUnits"
+            value={formData.SubordinateUnits}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+        </div>
+
+        <div style={{ marginBottom: "10px" }}>
+          <label htmlFor="TrackingUnits">الوحدات التنظيمية التي تتبع لهذه الوحدات التنظيمية</label>
+          <textarea
+            id="TrackingUnits"
+            name="TrackingUnits"
+            value={formData.TrackingUnits}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+
+        <div style={{ marginBottom: "10px" }}>
+          <label htmlFor="Objective">الهدف من وجود هذه الوحدة التنظيمية</label>
+          <textarea
+            id="Objective"
+            name="Objective"
+            value={formData.Objective}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+          />
+        </div>
+
+        {/* حقول المهام */}
+        <div style={{ marginBottom: "10px" }}>
+            <label>المهام والمسؤوليات</label>
+          {formData.tasks.map((task, index) => (
+            <div key={index} style={{ marginBottom: "10px" }}>
+              <input
+                type="text"
+                placeholder="المهمة والمسؤولية"
+                value={task.Description}
+                onChange={(e) => handleTaskChange(index, "Description", e.target.value)}
+                required
+                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+              />
+            </div>
+          ))}
+          <div className="flex" style={{ width: "100%", justifyContent: "space-between" }}>
+            <p></p>
+            <button type="button" style={{ padding: "0.25rem 1rem" }} onClick={addTaskField}>+</button>
+          </div>
+        </div>
+
+        {/* زر الإرسال */}
+        <button type="submit" style={{ padding: "10px 20px" }}>
+          حفظ
+        </button>
+      </form>
     </div>
   );
 }
