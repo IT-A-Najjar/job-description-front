@@ -7,37 +7,18 @@ import toast from "react-hot-toast";
 
 export default function Home() {
   const [formData, setFormData] = useState({
-    Name: "",
-    SubordinateUnits: "",
-    TrackingUnits: "",
-    Objective: "",
-    tasks: [{
-      Description: "",
-    }
-    ],
+    title: "",
+    unit: "",
+    manager_title: "",
+    job_code: "",
+    level: "",
+    responsibilities: ""
   });
 
   // تحديث الحقول العامة
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  // تحديث حقل المهام
-  const handleTaskChange = (index, field, value) => {
-    const updatedTasks = [...formData.tasks];
-    updatedTasks[index][field] = value;
-    setFormData({ ...formData, tasks: updatedTasks });
-  };
-
-
-  // إضافة حقل مهام جديد
-  const addTaskField = () => {
-    setFormData({
-      ...formData,
-      tasks: [...formData.tasks, { OrganizationUnitID: "", Description: "" }],
-    });
-  };
-
 
   // إرسال البيانات إلى API
   const handleSubmit = async (e) => {
@@ -53,10 +34,6 @@ export default function Home() {
           SubordinateUnits: "",
           TrackingUnits: "",
           Objective: "",
-          tasks: [{
-            Description: "",
-          }
-          ],
         });
     } catch (error) {
       console.error("Error adding organization unit:", error);
@@ -66,12 +43,12 @@ export default function Home() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
-      <div className="flex" style={{ width: "100%", justifyContent: "space-between",alignItems:"center" }}>
+      <div className="flex" style={{ width: "100%", justifyContent: "space-between", alignItems: "center" }}>
         <div>
-          <h1>بطاقة توصيف وحدة تنظيمية</h1>
-          <h3>يهدف هذا الاستبيان لجمع معلومات عن الوحدات التنظيمية</h3>
+          <h1>بطاقة الوصف الوظيفي</h1>
+          <h3>يهدف هذا الاستبيان لجمع معلومات عن المسميات الوظيفية بهدف تصميم بطاقات وصف وظيفي</h3>
         </div>
-        <div style={{minWidth:"168px", textAlign:"center"}}>
+        <div style={{ minWidth: "168px", textAlign: "center" }}>
           <img src="/images/logo.png" />
           <p>الجمهورية العربية السورية</p>
           <div>محافظة دمشق</div>
@@ -80,12 +57,12 @@ export default function Home() {
       <form onSubmit={handleSubmit}>
         {/* حقل اسم الوحدة */}
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="name">مسمى الوحدة التنظيمية</label>
+          <label htmlFor="title">مسمى الوظيفي</label>
           <input
             type="text"
-            id="Name"
-            name="Name"
-            value={formData.Name}
+            id="title"
+            name="title"
+            value={formData.title}
             onChange={handleChange}
             required
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
@@ -94,11 +71,11 @@ export default function Home() {
 
         {/* حقل الهدف */}
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="SubordinateUnits">الوحدات التنظيمية التي تتبع لها هذه الوحدات التنظيمية</label>
-          <textarea
-            id="SubordinateUnits"
-            name="SubordinateUnits"
-            value={formData.SubordinateUnits}
+          <label htmlFor="unit">الوحدات التنظيمية التي تتبع لها هذا المسمى</label>
+          <input
+            id="unit"
+            name="unit"
+            value={formData.unit}
             onChange={handleChange}
             required
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
@@ -106,11 +83,11 @@ export default function Home() {
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="TrackingUnits">الوحدات التنظيمية التي تتبع لهذه الوحدات التنظيمية</label>
-          <textarea
-            id="TrackingUnits"
-            name="TrackingUnits"
-            value={formData.TrackingUnits}
+          <label htmlFor="manager_title">المسمى الوظيفي للمسؤول المباشر</label>
+          <input
+            id="manager_title"
+            name="manager_title"
+            value={formData.manager_title}
             onChange={handleChange}
             required
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
@@ -118,38 +95,40 @@ export default function Home() {
         </div>
 
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="Objective">الهدف من وجود هذه الوحدة التنظيمية</label>
-          <textarea
-            id="Objective"
-            name="Objective"
-            value={formData.Objective}
+          <label htmlFor="job_code">الرمز الوظيفي</label>
+          <input
+            id="job_code"
+            name="job_code"
+            value={formData.job_code}
             onChange={handleChange}
             required
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
         </div>
 
-        {/* حقول المهام */}
         <div style={{ marginBottom: "10px" }}>
-            <label>المهام والمسؤوليات</label>
-          {formData.tasks.map((task, index) => (
-            <div key={index} style={{ marginBottom: "10px" }}>
-              <input
-                type="text"
-                placeholder="المهمة والمسؤولية"
-                value={task.Description}
-                onChange={(e) => handleTaskChange(index, "Description", e.target.value)}
-                required
-                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-              />
-            </div>
-          ))}
-          <div className="flex" style={{ width: "100%", justifyContent: "space-between" }}>
-            <p></p>
-            <button type="button" style={{ padding: "0.25rem 1rem" }} onClick={addTaskField}>+</button>
-          </div>
+          <label htmlFor="level">المستوى التنظيمي</label>
+          <input
+            id="level"
+            name="level"
+            value={formData.level}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+          />
         </div>
 
+        <div style={{ marginBottom: "10px" }}>
+          <label htmlFor="responsibilities">المهام والمسؤوليات</label>
+          <input
+            id="responsibilities"
+            name="responsibilities"
+            value={formData.responsibilities}
+            onChange={handleChange}
+            required
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+          />
+        </div>
         {/* زر الإرسال */}
         <button type="submit" style={{ padding: "10px 20px" }}>
           حفظ
